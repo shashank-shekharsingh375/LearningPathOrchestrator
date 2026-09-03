@@ -1,0 +1,47 @@
+{
+  "Azure AI Engineer": {
+    "required_skills": [
+      "Azure AI services",
+      "Generative AI",
+      "Responsible AI",
+      "Python for Azure",
+      "Azure OpenAI",
+      "Azure ML",
+      "Prompt engineering",
+      "Application integration"
+    ],
+    "recommended_certifications": [
+      "AI-900",
+      "AZ-204",
+      "DP-203"
+    ]
+  },
+  "Data Scientist": {
+    "required_skills": [
+      "Python",
+      "Data analysis",
+      "Machine learning",
+      "Azure ML",
+      "Feature engineering",
+      "Model evaluation"
+    ],
+    "recommended_certifications": [
+      "DP-100",
+      "AI-900"
+    ]
+  },
+  "Cloud Solution Architect": {
+    "required_skills": [
+      "Azure architecture",
+      "Cloud security",
+      "Networking",
+      "Identity",
+      "Cost optimization",
+      "Azure governance"
+    ],
+    "recommended_certifications": [
+      "AZ-305",
+      "AZ-400"
+    ]
+  }
+}

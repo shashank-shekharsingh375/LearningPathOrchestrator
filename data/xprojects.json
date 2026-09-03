@@ -1,0 +1,26 @@
+[
+  {
+    "title": "Azure AI Engineer Project: Build an AI-powered support assistant",
+    "role": "Azure AI Engineer",
+    "type": "xproject",
+    "description": "Create a conversational assistant leveraging Azure AI services, OpenAI, and retrieval patterns.",
+    "url": "https://learn.microsoft.com/training/paths/build-ai-solutions-azure-openai/",
+    "skills": ["Azure AI services", "Azure OpenAI", "Prompt engineering"]
+  },
+  {
+    "title": "Build a Responsible AI governance project",
+    "role": "Azure AI Engineer",
+    "type": "xproject",
+    "description": "Design governance guardrails, safeguards, and responsible AI practices for AI workloads.",
+    "url": "https://learn.microsoft.com/training/paths/get-started-ai-azure/",
+    "skills": ["Responsible AI", "Governance"]
+  },
+  {
+    "title": "Create a production ML workflow in Azure ML",
+    "role": "Azure AI Engineer",
+    "type": "xproject",
+    "description": "Train, deploy, and monitor a model with Azure ML pipelines.",
+    "url": "https://learn.microsoft.com/training/paths/build-ai-solutions-with-azure-machine-learning/",
+    "skills": ["Azure ML", "Model evaluation"]
+  }
+]

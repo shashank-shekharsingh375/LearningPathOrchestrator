@@ -1,0 +1,7 @@
+pytest
+python-dotenv
+azure-identity
+azure-ai-projects
+fastapi
+uvicorn
+python-multipart
