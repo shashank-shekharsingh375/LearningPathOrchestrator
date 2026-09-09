@@ -1,0 +1,1 @@
+"""Microsoft Foundry and Agent Framework integration points."""

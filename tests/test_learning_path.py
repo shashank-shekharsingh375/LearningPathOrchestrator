@@ -6,10 +6,26 @@ from app.agents.learning_curator import LearningCurator
 from app.agents.study_planner import StudyPlanner
 from app.approval.manager_approval import ApprovalManager, ApprovalStatus
 from app.models.employee import EmployeeProfile
+from app.models.skill_gap import SkillGapAnalysis
+from app.persistence.sqlite_repository import SqliteWorkflowRepository
+from app.workflows.hybrid_learning_workflow import HybridLearningPathWorkflow
 from app.workflows.learning_workflow import LearningPathWorkflow
 
 
 ROOT = Path(__file__).resolve().parents[1]
+
+
+class FakeSkillGapAgent:
+    def analyze_employee(self, employee):
+        return SkillGapAnalysis(
+            current_role=employee.current_role,
+            target_role=employee.target_role,
+            current_skills=["Python"],
+            required_skills=["Azure AI services"],
+            missing_skills=["Azure AI services"],
+            priority_score=25,
+            summary="Test gap analysis",
+        )
 
 
 def test_gap_analysis_for_azure_ai_engineer():
@@ -74,3 +90,24 @@ def test_full_learning_path_workflow():
     assert result["status"] in {"Approved", "Under Review", "Rejected"}
     assert "learning_plan" in result
     assert "risk_summary" in result
+
+
+def test_hybrid_workflow_persists_approval_state(tmp_path):
+    employee = EmployeeProfile(
+        current_role="Data Analyst",
+        experience_level="Junior",
+        certifications=["PL-300"],
+        target_role="Azure AI Engineer",
+    )
+    workflow = HybridLearningPathWorkflow(
+        data_dir=str(ROOT / "data"),
+        database_path=str(tmp_path / "workflow.db"),
+        gap_agent=FakeSkillGapAgent(),
+    )
+
+    result = workflow.create_draft(employee)
+    stored = SqliteWorkflowRepository(str(tmp_path / "workflow.db")).get(result["workflow_id"])
+
+    assert result["status"] == "AWAITING_MANAGER_APPROVAL"
+    assert stored["status"] == "AWAITING_MANAGER_APPROVAL"
+    assert stored["payload"]["employee"]["target_role"] == "Azure AI Engineer"

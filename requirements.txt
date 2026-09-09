@@ -1,7 +1,13 @@
 pytest
 python-dotenv
 azure-identity
-azure-ai-projects
+azure-ai-projects>=2.2.0
+azure-ai-inference>=1.0.0b9
 fastapi
 uvicorn
 python-multipart
+agent-framework-core==1.17.0
+agent-framework-openai==1.14.2
+agent-framework-foundry==1.12.0
+openai>=2.25.0,<4
+aiohttp>=3.9

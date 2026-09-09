@@ -1,0 +1,1 @@
+"""Persistence interfaces for durable workflow and approval state."""
