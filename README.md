@@ -4,11 +4,13 @@ A FastAPI prototype that creates Azure and AI learning journeys with skill-gap a
 
 ## Run locally
 
-From the parent workspace:
+From a PowerShell terminal in this project directory:
 
 ```powershell
-$env:PYTHONPATH = "$PWD\LearningPathOrchestrator"
-.\.venv\Scripts\python.exe -m uvicorn app.main:app --host 127.0.0.1 --port 8000
+cd "C:\Azure AI\AI_For_The_Azure_Practice_Entry_Level\LearningPathOrchestrator"
+& "..\.venv-hybrid\Scripts\Activate.ps1"
+$env:PYTHONPATH = (Get-Location).Path
+python -m uvicorn app.main:app --host 127.0.0.1 --port 8000
 ```
 
 Open http://127.0.0.1:8000.
@@ -38,6 +40,6 @@ The `hybrid_approach` branch adds the first Foundry + Agent Framework boundary:
 az login
 ```
 
-5. Invoke `HybridLearningPathWorkflow` from Python or wire it into the FastAPI route after validating the Foundry agent response schema.
+5. Start the FastAPI app using the clean hybrid environment above.
 
-The current browser route remains on the deterministic workflow until the Foundry agent is configured. This keeps the local UI runnable while the hybrid slice is tested independently.
+The browser route now uses `HybridLearningPathWorkflow`. Each generated plan is persisted to SQLite as `AWAITING_MANAGER_APPROVAL`, and manager review updates the stored workflow by ID.
