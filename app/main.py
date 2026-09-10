@@ -91,11 +91,19 @@ def generate(current_role: str = Form(...), experience_level: str = Form(...), c
     return render_page(workflow.create_draft(employee))
 
 
+@app.get("/review", response_class=HTMLResponse)
+def review_page():
+    return render_page(error="Open a generated pathway and use its manager approval buttons to review it.")
+
+
 @app.post("/review", response_class=HTMLResponse)
 def review(workflow_id: str = Form(...), decision: str = Form(...), notes: str = Form("")):
-  result = workflow.review(workflow_id, decision, notes)
-  result["risk_summary"]["approval_status"] = result["status"]
-  return render_page(result)
+    try:
+        result = workflow.review(workflow_id, decision, notes)
+    except (KeyError, ValueError) as error:
+        return render_page(error=str(error))
+    result["risk_summary"]["approval_status"] = result["status"]
+    return render_page(result)
 
 
 STYLES = """
