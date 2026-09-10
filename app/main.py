@@ -1,17 +1,18 @@
-import json
 from pathlib import Path
-from typing import List
 
 from fastapi import FastAPI, Form
 from fastapi.responses import HTMLResponse
 
 from app.models.employee import EmployeeProfile
-from app.workflows.learning_workflow import LearningPathWorkflow
+from app.workflows.hybrid_learning_workflow import HybridLearningPathWorkflow
 
 
 APP_ROOT = Path(__file__).resolve().parent.parent
 DATA_DIR = APP_ROOT / "data"
-workflow = LearningPathWorkflow(data_dir=str(DATA_DIR))
+workflow = HybridLearningPathWorkflow(
+  data_dir=str(DATA_DIR),
+  database_path=str(DATA_DIR / "workflow.db"),
+)
 app = FastAPI(title="Learning Path Orchestrator")
 
 
@@ -51,7 +52,7 @@ def render_page(result: dict | None = None, error: str = "") -> str:
             {''.join(f"<span>{esc(skill)}</span>" for skill in gap['missing_skills'])}</div></div>
             <div><h3>Learning resources</h3><ul class='resources'>{modules}</ul></div></div>
           <h3 class='section-title'>Weekly study plan</h3><div class='weeks'>{weeks}</div>
-          <form class='approval' method='post' action='/review'><input type='hidden' name='payload' value='{esc(json.dumps(result))}'>
+          <form class='approval' method='post' action='/review'><input type='hidden' name='workflow_id' value='{esc(result['workflow_id'])}'>
             <label>Manager notes <textarea name='notes' placeholder='Add guidance for the learner'></textarea></label>
             <div class='actions'><button name='decision' value='Rejected' class='secondary'>Request changes</button>
               <button name='decision' value='Approved'>Approve pathway</button></div></form>
@@ -87,16 +88,14 @@ def generate(current_role: str = Form(...), experience_level: str = Form(...), c
         target_role=target_role.strip(),
         manager_name=manager_name.strip() or "Manager",
     )
-    return render_page(workflow.run(employee, manager_name=employee.manager_name or "Manager"))
+    return render_page(workflow.create_draft(employee))
 
 
 @app.post("/review", response_class=HTMLResponse)
-def review(payload: str = Form(...), decision: str = Form(...), notes: str = Form("")):
-    result = json.loads(payload)
-    result["status"] = decision
-    result["risk_summary"]["approval_status"] = decision
-    result["approval"] = {"status": decision, "notes": notes or "Manager review completed."}
-    return render_page(result)
+def review(workflow_id: str = Form(...), decision: str = Form(...), notes: str = Form("")):
+  result = workflow.review(workflow_id, decision, notes)
+  result["risk_summary"]["approval_status"] = result["status"]
+  return render_page(result)
 
 
 STYLES = """

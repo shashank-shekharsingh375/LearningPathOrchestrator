@@ -43,6 +43,8 @@ class SqliteWorkflowRepository:
         stored = self.get(workflow_id)
         if stored is None:
             raise KeyError(f"Unknown workflow: {workflow_id}")
+        if stored["status"] != "AWAITING_MANAGER_APPROVAL":
+            raise ValueError(f"Workflow is not awaiting approval: {workflow_id}")
         payload = stored["payload"]
         payload["approval"] = approval
         payload["status"] = status

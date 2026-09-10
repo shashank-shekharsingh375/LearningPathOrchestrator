@@ -33,3 +33,28 @@ class HybridLearningPathWorkflow:
         }
         self.repository.save(workflow_id, "AWAITING_MANAGER_APPROVAL", payload)
         return {"status": "AWAITING_MANAGER_APPROVAL", **payload}
+
+    def get(self, workflow_id: str) -> dict | None:
+        stored = self.repository.get(workflow_id)
+        if stored is None:
+            return None
+        return {"status": stored["status"], **stored["payload"]}
+
+    def review(self, workflow_id: str, decision: str, notes: str = "") -> dict:
+        normalized = decision.strip().lower()
+        status_by_decision = {
+            "approved": "APPROVED",
+            "changes requested": "CHANGES_REQUESTED",
+            "rejected": "CHANGES_REQUESTED",
+        }
+        try:
+            status = status_by_decision[normalized]
+        except KeyError as error:
+            raise ValueError(f"Unsupported manager decision: {decision}") from error
+
+        approval = {
+            "status": status,
+            "notes": notes.strip() or "Manager review completed.",
+        }
+        self.repository.update_status(workflow_id, status, approval)
+        return self.get(workflow_id)  # type: ignore[return-value]
