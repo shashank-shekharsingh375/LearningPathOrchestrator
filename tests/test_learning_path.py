@@ -111,3 +111,23 @@ def test_hybrid_workflow_persists_approval_state(tmp_path):
     assert result["status"] == "AWAITING_MANAGER_APPROVAL"
     assert stored["status"] == "AWAITING_MANAGER_APPROVAL"
     assert stored["payload"]["employee"]["target_role"] == "Azure AI Engineer"
+
+
+def test_hybrid_workflow_accepts_request_changes_button(tmp_path):
+    employee = EmployeeProfile(
+        current_role="Data Analyst",
+        experience_level="Junior",
+        certifications=["PL-300"],
+        target_role="Azure AI Engineer",
+    )
+    workflow = HybridLearningPathWorkflow(
+        data_dir=str(ROOT / "data"),
+        database_path=str(tmp_path / "workflow.db"),
+        gap_agent=FakeSkillGapAgent(),
+    )
+
+    draft = workflow.create_draft(employee)
+    result = workflow.review(draft["workflow_id"], "Rejected", "Add more practice")
+
+    assert result["status"] == "CHANGES_REQUESTED"
+    assert result["approval"]["notes"] == "Add more practice"

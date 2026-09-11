@@ -102,7 +102,6 @@ def review(workflow_id: str = Form(...), decision: str = Form(...), notes: str =
         result = workflow.review(workflow_id, decision, notes)
     except (KeyError, ValueError) as error:
         return render_page(error=str(error))
-    result["risk_summary"]["approval_status"] = result["status"]
     return render_page(result)
 
 
